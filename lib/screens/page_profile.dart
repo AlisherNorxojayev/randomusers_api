@@ -25,9 +25,28 @@ class _PageProfileState extends State<PageProfile> {
   Widget build(BuildContext context) {
     Widget body;
     if (hasData) {
-      body = Text(user!.firstName);
-    } else {
       body = Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundImage: NetworkImage(user!.img),
+              radius: 50,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(user!.firstName + " " + user!.lastName),
+            const SizedBox(
+              height: 40,
+            ),
+            Text("age - " + user!.age.toString()+ ","),
+            Text("city of " + user!.city),
+          ],
+        ),
+      );
+    } else {
+      body = const Center(
         child: CircularProgressIndicator(),
       );
       getData();
@@ -45,14 +64,18 @@ class _PageProfileState extends State<PageProfile> {
     http.get(url).then((value) {
       final data = jsonDecode(value.body);
       Map results = data['results'][0];
-      String first = results['name']['first'];
-      String last = results['name']['last'];
-      user = Randomusers(first, last);
+      // String first = results['name']['first'];
+      // String last = results['name']['last'];
+      // String img = results["picture"]["medium"];
+      //print(results);
+      user = Randomusers.fromJson(results);
+      // user = Randomusers(first, last, img);
+      // print(results);
       setState(() {
         hasData = true;
       });
-      print(hasData);
+      print("end");
     });
-    print('end');
+    print('start');
   }
 }
