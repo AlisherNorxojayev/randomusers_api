@@ -11,7 +11,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: PageProfile(),
+      initialRoute: "home",
+      routes: {
+        "home":(context) => PageProfile()
+      }
     );
   }
 }

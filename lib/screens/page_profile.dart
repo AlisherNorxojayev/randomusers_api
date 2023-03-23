@@ -21,61 +21,68 @@ class _PageProfileState extends State<PageProfile> {
 
   bool hasData = false;
 
-  @override
-  Widget build(BuildContext context) {
-    Widget body;
-    if (hasData) {
-      body = Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user!.img),
-              radius: 50,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(user!.firstName + " " + user!.lastName),
-            const SizedBox(
-              height: 40,
-            ),
-            Text("age - " + user!.age.toString()+ ","),
-            Text("city of " + user!.city),
-          ],
-        ),
-      );
-    } else {
-      body = const Center(
-        child: CircularProgressIndicator(),
-      );
-      getData();
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
-      body: body,
-    );
+  Future<String> getdata() async {
+    String x = "Alisher";
+    Uri url = Uri.parse('https://randomuser.me/api/');
+    http.Response _response = await http.get(url);
+    final data = jsonDecode(_response.body);
+    Map results = data['results'][0];
+    user = Randomusers.fromJson(results);
+    hasData = true;
+    return x;
   }
 
-  getData() {
-    Uri url = Uri.parse('https://randomuser.me/api/');
-    http.get(url).then((value) {
-      final data = jsonDecode(value.body);
-      Map results = data['results'][0];
-      // String first = results['name']['first'];
-      // String last = results['name']['last'];
-      // String img = results["picture"]["medium"];
-      //print(results);
-      user = Randomusers.fromJson(results);
-      // user = Randomusers(first, last, img);
-      // print(results);
-      setState(() {
-        hasData = true;
-      });
-      print("end");
-    });
-    print('start');
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FutureBuilder(
+          future: getdata(),
+          initialData: "done all",
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(user!.imagelarge),
+                      radius: 50,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(user!.firstName + " " + user!.lastName),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Text("age - " + user!.age.toString() + ","),
+                    Text("city of " + user!.city),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, "home");
+                        },
+                        icon: Icon(Icons.refresh))
+                  ],
+                ),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Column(children: [
+                  Text("No Internet"),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, "home");
+                      },
+                      icon: Icon(Icons.refresh))
+                ]),
+              );
+            }
+            return Center(child: CircularProgressIndicator());
+          }),
+    );
   }
 }
