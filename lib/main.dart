@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:randomusers_api/screens/page_profile.dart';
+import 'package:randomusers_api/screens/home_page.dart';
 
 void main() {
   runApp(HomePage());
@@ -11,10 +11,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: "home",
-      routes: {
-        "home":(context) => PageProfile()
-      }
+      debugShowCheckedModeBanner: false,
+      home: PageProfile(),
     );
   }
 }
